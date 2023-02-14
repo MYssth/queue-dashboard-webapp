@@ -28,8 +28,6 @@ export default function App() {
   const [curDate, setCurDate] = useState('');
   const [curTime, setCurTime] = useState('');
 
-  const isSkip = (value) => value !== '';
-
   useEffect(() => {
 
     const interval = setInterval(() => {
@@ -147,9 +145,10 @@ export default function App() {
       }
     }
 
+    HNStatus = [];
     HNStatus = tempHNStatus;
     await setFilterHNStatus();
-
+    
   }
 
   async function setFilterHNStatus(){
