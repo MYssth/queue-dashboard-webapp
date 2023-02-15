@@ -23,6 +23,13 @@ let filterHNStatus = [];
 let tableState = "showAll";
 let findHN = "";
 
+let showHistoryTake = true;
+let showSeeDoctor = true;
+let showWaitResult = true;
+let showMakePay = true;
+let showGetMed = true;
+let showFinished = true;
+
 export default function App() {
 
   const [curDate, setCurDate] = useState('');
@@ -77,70 +84,48 @@ export default function App() {
     let tempHNStatus = [];
     const date = new Date();
 
-    if (HNStatus.length !== 0) {
-      for (let i = 0; i < newData.length; i += 1) {
-        for (let l = 0; l < HNStatus.length; l += 1) {
-          if (newData[i].VNSEQ === HNStatus[l].VNSEQ) {
-            if (HNStatus[l].FIN_FLAG !== 4) {
-              if (newData[i].STATUS === "จ่ายยา" || newData[i].STATUS === "ชำระเงิน(คนไข้ไม่มียา)") {
-                console.log("finishing detect!! counter = " + HNStatus[l].FIN_FLAG + 1);
-                tempHNStatus.push({
-                  HN: newData[i].HN,
-                  DIVISION: newData[i].DIVISION,
-                  REG_TIME: newData[i].TIME,
-                  VNSEQ: newData[i].VNSEQ,
-                  STATUS: newData[i].STATUS,
-                  TIME: await HNStatus[l].STATUS === newData[i].STATUS ? HNStatus[l].TIME : date.toLocaleString(),
-                  WAIT_TIME: await HNStatus[l].STATUS === newData[i].STATUS ? new Date(date.getTime() - new Date(HNStatus[l].TIME).getTime() - 25200000).toLocaleTimeString('th-TH', { minute: '2-digit', hour12: false, }) + (parseInt(new Date(date.getTime() - new Date(HNStatus[l].TIME).getTime() - 25200000).toLocaleTimeString('th-TH', { hour: '2-digit', hour12: false, })) * 60) : 0,
-                  FIN_FLAG: HNStatus[l].FIN_FLAG + 1,
-                });
-              }
-              else {
-                tempHNStatus.push({
-                  HN: newData[i].HN,
-                  DIVISION: newData[i].DIVISION,
-                  REG_TIME: newData[i].TIME,
-                  VNSEQ: newData[i].VNSEQ,
-                  STATUS: newData[i].STATUS,
-                  TIME: await HNStatus[l].STATUS === newData[i].STATUS ? HNStatus[l].TIME : date.toString(),
-                  WAIT_TIME: await HNStatus[l].STATUS === newData[i].STATUS ? parseInt(new Date(date.getTime() - new Date(HNStatus[l].TIME).getTime() - 25200000).toLocaleTimeString('th-TH', { minute: '2-digit', hour12: false, })) + (parseInt(new Date(date.getTime() - new Date(HNStatus[l].TIME).getTime() - 25200000).toLocaleTimeString('th-TH', { hour: '2-digit', hour12: false, })) * 60) : 0,
-                  FIN_FLAG: 0,
-                });
-              }
-            }
-            break;
-          }
-          else if (l === HNStatus.length - 1) {
-            if (newData[i].STATUS !== "จ่ายยา" && newData[i].STATUS !== "ชำระเงิน(คนไข้ไม่มียา)") {
-              tempHNStatus.push({
-                HN: newData[i].HN,
-                DIVISION: newData[i].DIVISION,
-                REG_TIME: newData[i].TIME,
-                VNSEQ: newData[i].VNSEQ,
-                STATUS: newData[i].STATUS,
-                TIME: date.toString(),
-                WAIT_TIME: 0,
-                FIN_FLAG: 0,
-              });
-            }
-          }
+    for (let i = 0; i < newData.length; i += 1) {
 
+      // ==== check for duplicate data ====
+
+      let notDup = true;
+      for (let l = 0; l < tempHNStatus.length; l += 1) {
+        if (newData[i].VNSEQ === tempHNStatus[l].VNSEQ) {
+          notDup = false;
+          break;
         }
       }
-    }
-    else {
-      for (let i = 0; i < newData.length; i += 1) {
+
+      // ==================================
+      if (notDup) {
         if (newData[i].STATUS !== "จ่ายยา" && newData[i].STATUS !== "ชำระเงิน(คนไข้ไม่มียา)") {
           tempHNStatus.push({
             HN: newData[i].HN,
             DIVISION: newData[i].DIVISION,
-            REG_TIME: newData[i].TIME,
+            REG_TIME: ("0" + newData[i].TIME).slice(-5),
             VNSEQ: newData[i].VNSEQ,
             STATUS: newData[i].STATUS,
-            TIME: date.toString(),
-            WAIT_TIME: 0,
+            WAIT_TIME: ((date.getHours() - (new Date(newData[i].EVENTTIM).getHours() - 7)) * 60) + (date.getMinutes() - new Date(newData[i].EVENTTIM).getMinutes()),
             FIN_FLAG: 0,
           });
+        }
+        else {
+          for (let l = 0; l < HNStatus.length; l += 1) {
+            if (HNStatus[l].VNSEQ === newData[i].VNSEQ) {
+              if (HNStatus[l].FIN_FLAG < 4) {
+                tempHNStatus.push({
+                  HN: newData[i].HN,
+                  DIVISION: newData[i].DIVISION,
+                  REG_TIME: ("0" + newData[i].TIME).slice(-5),
+                  VNSEQ: newData[i].VNSEQ,
+                  STATUS: newData[i].STATUS,
+                  WAIT_TIME: ((date.getHours() - (new Date(newData[i].EVENTTIM).getHours() - 7)) * 60) + (date.getMinutes() - new Date(newData[i].EVENTTIM).getMinutes()),
+                  FIN_FLAG: HNStatus[l].FIN_FLAG + 1,
+                });
+              }
+              break;
+            }
+          }
         }
       }
     }
@@ -148,16 +133,39 @@ export default function App() {
     HNStatus = [];
     HNStatus = tempHNStatus;
     await setFilterHNStatus();
-    
+
   }
 
-  async function setFilterHNStatus(){
-    if(tableState === "showAll"){
+  async function setFilterHNStatus() {
+
+    filterHNStatus = [];
+
+    if (tableState === "showAll") {
       filterHNStatus = HNStatus;
     }
-    else if(tableState === "findHN"){
+    else if (tableState === "findHN") {
       filterHNStatus = HNStatus.filter(dt => (dt.HN).includes(findHN));
     }
+
+    if (!showHistoryTake) {
+      filterHNStatus = filterHNStatus.filter(dt => dt.STATUS !== "ลงทะเบียน");
+    }
+    if (!showSeeDoctor) {
+      filterHNStatus = filterHNStatus.filter(dt => dt.STATUS !== "รอพบแพทย์");
+    }
+    if (!showWaitResult) {
+      filterHNStatus = filterHNStatus.filter(dt => dt.STATUS !== "รอผล");
+    }
+    if (!showMakePay) {
+      filterHNStatus = filterHNStatus.filter(dt => dt.STATUS !== "จบการรักษา");
+    }
+    if (!showGetMed) {
+      filterHNStatus = filterHNStatus.filter(dt => dt.STATUS !== "ชำระเงิน");
+    }
+    if (!showFinished) {
+      filterHNStatus = filterHNStatus.filter(dt => dt.STATUS !== "จ่ายยา" || dt.STATUS === "ชำระเงิน(คนไข้ไม่มียา)");
+    }
+
   }
 
   const handleFindHN = () => {
@@ -170,6 +178,12 @@ export default function App() {
     tableState = "showAll";
     findHN = "";
     document.getElementById("HNCode").value = '';
+    showHistoryTake = true;
+    showSeeDoctor = true;
+    showWaitResult = true;
+    showMakePay = true;
+    showGetMed = true;
+    showFinished = true;
     setFilterHNStatus();
   }
 
@@ -185,10 +199,10 @@ export default function App() {
             </Grid>
             <Grid item xs={4} align='right' sx={{ display: 'flex', alignItems: 'end', justifyContent: 'flex-end', }}>
               <Stack>
-                <Typography variant="h4" gutterBottom>
+                <Typography variant="h4" gutterBottom sx={{ color: '#226d23', fontWeight: 1000 }} >
                   Patient Status
                 </Typography>
-                <Typography gutterBottom>
+                <Typography gutterBottom sx={{ color: '#285094' }} >
                   {`${curDate} ${curTime}`}
                 </Typography>
               </Stack>
@@ -211,12 +225,12 @@ export default function App() {
                       <TableCell align='center' ><img width="76" src={`${process.env.PUBLIC_URL}/img/table_hn.jpg`} alt="HN" /></TableCell>
                       <TableCell align='center' ><img width="76" src={`${process.env.PUBLIC_URL}/img/table_division.jpg`} alt="หน่วยงาน" /></TableCell>
                       <TableCell align='center' ><img width="76" src={`${process.env.PUBLIC_URL}/img/table_register.jpg`} alt="ลงทะเบียน" /></TableCell>
-                      <TableCell align='center' ><img width="76" src={`${process.env.PUBLIC_URL}/img/table_historytake.jpg`} alt="ซักประวัติ" /></TableCell>
-                      <TableCell align='center' ><img width="76" src={`${process.env.PUBLIC_URL}/img/table_seedoctor.jpg`} alt="พบแพทย์" /></TableCell>
-                      <TableCell align='center' ><img width="76" src={`${process.env.PUBLIC_URL}/img/table_waitresult.jpg`} alt="รอผลตรวจ" /></TableCell>
-                      <TableCell align='center' ><img width="76" src={`${process.env.PUBLIC_URL}/img/table_makepay.jpg`} alt="ชำระเงิน" /></TableCell>
-                      <TableCell align='center' ><img width="76" src={`${process.env.PUBLIC_URL}/img/table_getmed.jpg`} alt="รับยา" /></TableCell>
-                      <TableCell align='center' ><img width="76" src={`${process.env.PUBLIC_URL}/img/table_finished.jpg`} alt="กลับบ้าน" /></TableCell>
+                      <TableCell align='center' ><img width="76" src={`${process.env.PUBLIC_URL}/img/table_historytake.jpg`} alt="ซักประวัติ" onClick={() => { showHistoryTake = !showHistoryTake; setFilterHNStatus(); }} style={{ filter: showHistoryTake ? "" : "grayscale(100%)" }} /></TableCell>
+                      <TableCell align='center' ><img width="76" src={`${process.env.PUBLIC_URL}/img/table_seedoctor.jpg`} alt="พบแพทย์" onClick={() => { showSeeDoctor = !showSeeDoctor; setFilterHNStatus(); }} style={{ filter: showSeeDoctor ? "" : "grayscale(100%)" }} /></TableCell>
+                      <TableCell align='center' ><img width="76" src={`${process.env.PUBLIC_URL}/img/table_waitresult.jpg`} alt="รอผลตรวจ" onClick={() => { showWaitResult = !showWaitResult; setFilterHNStatus(); }} style={{ filter: showWaitResult ? "" : "grayscale(100%)" }} /></TableCell>
+                      <TableCell align='center' ><img width="76" src={`${process.env.PUBLIC_URL}/img/table_makepay.jpg`} alt="ชำระเงิน" onClick={() => { showMakePay = !showMakePay; setFilterHNStatus(); }} style={{ filter: showMakePay ? "" : "grayscale(100%)" }} /></TableCell>
+                      <TableCell align='center' ><img width="76" src={`${process.env.PUBLIC_URL}/img/table_getmed.jpg`} alt="รับยา" onClick={() => { showGetMed = !showGetMed; setFilterHNStatus(); }} style={{ filter: showGetMed ? "" : "grayscale(100%)" }} /></TableCell>
+                      <TableCell align='center' ><img width="76" src={`${process.env.PUBLIC_URL}/img/table_finished.jpg`} alt="กลับบ้าน" onClick={() => { showFinished = !showFinished; setFilterHNStatus(); }} style={{ filter: showFinished ? "" : "grayscale(100%)" }} /></TableCell>
                       <TableCell><img width="76" src={`${process.env.PUBLIC_URL}/img/table_waittime.jpg`} alt="เวลาคอย" /></TableCell>
                     </TableRow>
                   </TableHead>
@@ -226,16 +240,16 @@ export default function App() {
                         key={row.VNSEQ}
                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                       >
-                        <TableCell>{row.HN}</TableCell>
-                        <TableCell align='center' >{row.DIVISION}</TableCell>
-                        <TableCell align='center' >{row.REG_TIME}</TableCell>
+                        <TableCell><Typography style={{ fontWeight: 1000 }} sx={{ color: '#285094' }} >{row.HN}</Typography></TableCell>
+                        <TableCell align='center' ><Typography sx={{ color: '#285094' }} >{row.DIVISION}</Typography></TableCell>
+                        <TableCell align='center' ><Typography sx={{ color: '#285094' }} >{`${row.REG_TIME}`}</Typography></TableCell>
                         <TableCell align='center' >{row.STATUS === "ลงทะเบียน" ? <img width="26" src={`${process.env.PUBLIC_URL}/img/Green_dot.svg`} alt="กลับบ้าน" /> : ""}</TableCell>
                         <TableCell align='center' >{row.STATUS === "รอพบแพทย์" ? <img width="26" src={`${process.env.PUBLIC_URL}/img/Green_dot.svg`} alt="กลับบ้าน" /> : ""}</TableCell>
                         <TableCell align='center' >{row.STATUS === "รอผล" ? <img width="26" src={`${process.env.PUBLIC_URL}/img/Green_dot.svg`} alt="กลับบ้าน" /> : ""}</TableCell>
                         <TableCell align='center' >{row.STATUS === "จบการรักษา" ? <img width="26" src={`${process.env.PUBLIC_URL}/img/Green_dot.svg`} alt="กลับบ้าน" /> : ""}</TableCell>
                         <TableCell align='center' >{row.STATUS === "ชำระเงิน" ? <img width="26" src={`${process.env.PUBLIC_URL}/img/Green_dot.svg`} alt="กลับบ้าน" /> : ""}</TableCell>
                         <TableCell align='center' >{row.STATUS === "จ่ายยา" || row.STATUS === "ชำระเงิน(คนไข้ไม่มียา)" ? <img width="26" src={`${process.env.PUBLIC_URL}/img/Green_dot.svg`} alt="กลับบ้าน" /> : ""}</TableCell>
-                        <TableCell>{row.WAIT_TIME} min{row.WAIT_TIME > 1 ? "s" : ""}</TableCell>
+                        <TableCell><Typography sx={{ color: '#285094' }} >{row.WAIT_TIME} min{row.WAIT_TIME > 1 ? "s" : ""}</Typography></TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
