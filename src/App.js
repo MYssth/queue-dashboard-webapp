@@ -82,7 +82,6 @@ export default function App() {
   async function addHNStatus(newData) {
 
     let tempHNStatus = [];
-    const date = new Date();
 
     for (let i = 0; i < newData.length; i += 1) {
 
@@ -105,7 +104,7 @@ export default function App() {
             REG_TIME: ("0" + newData[i].TIME).slice(-5),
             VNSEQ: newData[i].VNSEQ,
             STATUS: newData[i].STATUS,
-            WAIT_TIME: ((date.getHours() - (new Date(newData[i].EVENTTIM).getHours() - 7)) * 60) + (date.getMinutes() - new Date(newData[i].EVENTTIM).getMinutes()),
+            WAIT_TIME: newData[i].EVENTTIM,
             FIN_FLAG: 0,
           });
         }
@@ -119,7 +118,7 @@ export default function App() {
                   REG_TIME: ("0" + newData[i].TIME).slice(-5),
                   VNSEQ: newData[i].VNSEQ,
                   STATUS: newData[i].STATUS,
-                  WAIT_TIME: ((date.getHours() - (new Date(newData[i].EVENTTIM).getHours() - 7)) * 60) + (date.getMinutes() - new Date(newData[i].EVENTTIM).getMinutes()),
+                  WAIT_TIME: newData[i].EVENTTIM,
                   FIN_FLAG: HNStatus[l].FIN_FLAG + 1,
                 });
               }
