@@ -191,7 +191,7 @@ export default function App() {
       <CssBaseline />
       <Container maxWidth="lg">
 
-        <Box sx={{ flexGrow: 1 }}>
+        <Box sx={{ flexGrow: 1, width: "100%" }}>
           <Grid container spacing={1}>
             <Grid item xs={8}>
               <img width="300" src={`${process.env.PUBLIC_URL}/img/logo.png`} alt="logo" />
@@ -203,6 +203,9 @@ export default function App() {
                 </Typography>
                 <Typography gutterBottom sx={{ color: '#285094' }} >
                   {`${curDate} ${curTime}`}
+                </Typography>
+                <Typography variant="caption" gutterBottom sx={{ color: '#285094' }} >
+                  Version: 1.9
                 </Typography>
               </Stack>
             </Grid>
@@ -217,20 +220,20 @@ export default function App() {
 
             </Grid>
             <Grid item xs={12} >
-              <TableContainer component={Paper} style={{ overflowX: "initial" }}>
-                <Table stickyHeader sx={{ minWidth: 650 }} aria-label="sticky table" >
+              <TableContainer component={Paper} style={{ overflowX: "initial" }} sx={{ width: "100%" }} >
+                <Table stickyHeader aria-label="sticky table" >
                   <TableHead>
                     <TableRow>
-                      <TableCell align='center' ><img width="76" src={`${process.env.PUBLIC_URL}/img/table_hn.jpg`} alt="HN" /></TableCell>
-                      <TableCell align='center' ><img width="76" src={`${process.env.PUBLIC_URL}/img/table_division.jpg`} alt="หน่วยงาน" /></TableCell>
-                      <TableCell align='center' ><img width="76" src={`${process.env.PUBLIC_URL}/img/table_register.jpg`} alt="ลงทะเบียน" /></TableCell>
-                      <TableCell align='center' ><img width="76" src={`${process.env.PUBLIC_URL}/img/table_historytake.jpg`} alt="ซักประวัติ" onClick={() => { showHistoryTake = !showHistoryTake; setFilterHNStatus(); }} style={{ filter: showHistoryTake ? "" : "grayscale(100%)" }} /></TableCell>
-                      <TableCell align='center' ><img width="76" src={`${process.env.PUBLIC_URL}/img/table_seedoctor.jpg`} alt="พบแพทย์" onClick={() => { showSeeDoctor = !showSeeDoctor; setFilterHNStatus(); }} style={{ filter: showSeeDoctor ? "" : "grayscale(100%)" }} /></TableCell>
-                      <TableCell align='center' ><img width="76" src={`${process.env.PUBLIC_URL}/img/table_waitresult.jpg`} alt="รอผลตรวจ" onClick={() => { showWaitResult = !showWaitResult; setFilterHNStatus(); }} style={{ filter: showWaitResult ? "" : "grayscale(100%)" }} /></TableCell>
-                      <TableCell align='center' ><img width="76" src={`${process.env.PUBLIC_URL}/img/table_makepay.jpg`} alt="ชำระเงิน" onClick={() => { showMakePay = !showMakePay; setFilterHNStatus(); }} style={{ filter: showMakePay ? "" : "grayscale(100%)" }} /></TableCell>
-                      <TableCell align='center' ><img width="76" src={`${process.env.PUBLIC_URL}/img/table_getmed.jpg`} alt="รับยา" onClick={() => { showGetMed = !showGetMed; setFilterHNStatus(); }} style={{ filter: showGetMed ? "" : "grayscale(100%)" }} /></TableCell>
-                      <TableCell align='center' ><img width="76" src={`${process.env.PUBLIC_URL}/img/table_finished.jpg`} alt="กลับบ้าน" onClick={() => { showFinished = !showFinished; setFilterHNStatus(); }} style={{ filter: showFinished ? "" : "grayscale(100%)" }} /></TableCell>
-                      <TableCell><img width="76" src={`${process.env.PUBLIC_URL}/img/table_waittime.jpg`} alt="เวลาคอย" /></TableCell>
+                      <TableCell align='center' ><img width="69" src={`${process.env.PUBLIC_URL}/img/table_hn.jpg`} alt="HN" /></TableCell>
+                      <TableCell align='center' ><img width="69" src={`${process.env.PUBLIC_URL}/img/table_division.jpg`} alt="หน่วยงาน" /></TableCell>
+                      <TableCell align='center' ><img width="69" src={`${process.env.PUBLIC_URL}/img/table_register.jpg`} alt="ลงทะเบียน" /></TableCell>
+                      <TableCell align='center' ><img width="69" src={`${process.env.PUBLIC_URL}/img/table_historytake.jpg`} alt="ซักประวัติ" onClick={() => { showHistoryTake = !showHistoryTake; setFilterHNStatus(); }} style={{ filter: showHistoryTake ? "" : "grayscale(100%)" }} /></TableCell>
+                      <TableCell align='center' ><img width="69" src={`${process.env.PUBLIC_URL}/img/table_seedoctor.jpg`} alt="พบแพทย์" onClick={() => { showSeeDoctor = !showSeeDoctor; setFilterHNStatus(); }} style={{ filter: showSeeDoctor ? "" : "grayscale(100%)" }} /></TableCell>
+                      <TableCell align='center' ><img width="69" src={`${process.env.PUBLIC_URL}/img/table_waitresult.jpg`} alt="รอผลตรวจ" onClick={() => { showWaitResult = !showWaitResult; setFilterHNStatus(); }} style={{ filter: showWaitResult ? "" : "grayscale(100%)" }} /></TableCell>
+                      <TableCell align='center' ><img width="69" src={`${process.env.PUBLIC_URL}/img/table_makepay.jpg`} alt="ชำระเงิน" onClick={() => { showMakePay = !showMakePay; setFilterHNStatus(); }} style={{ filter: showMakePay ? "" : "grayscale(100%)" }} /></TableCell>
+                      <TableCell align='center' ><img width="69" src={`${process.env.PUBLIC_URL}/img/table_getmed.jpg`} alt="รับยา" onClick={() => { showGetMed = !showGetMed; setFilterHNStatus(); }} style={{ filter: showGetMed ? "" : "grayscale(100%)" }} /></TableCell>
+                      <TableCell align='center' ><img width="69" src={`${process.env.PUBLIC_URL}/img/table_finished.jpg`} alt="กลับบ้าน" onClick={() => { showFinished = !showFinished; setFilterHNStatus(); }} style={{ filter: showFinished ? "" : "grayscale(100%)" }} /></TableCell>
+                      <TableCell align='center' ><img width="69" src={`${process.env.PUBLIC_URL}/img/table_waittime.jpg`} alt="เวลาคอย" /></TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody sx={{ '& tr:nth-of-type(odd)': { backgroundColor: 'grey.300', }, }}>
@@ -239,7 +242,7 @@ export default function App() {
                         key={row.VNSEQ}
                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                       >
-                        <TableCell><Typography style={{ fontWeight: 1000 }} sx={{ color: '#285094' }} >{row.HN}</Typography></TableCell>
+                        <TableCell ><Typography style={{ fontWeight: 1000 }} sx={{ color: '#285094' }} >{row.HN}</Typography></TableCell>
                         <TableCell align='center' ><Typography sx={{ color: '#285094' }} >{row.DIVISION}</Typography></TableCell>
                         <TableCell align='center' ><Typography sx={{ color: '#285094' }} >{`${row.REG_TIME}`}</Typography></TableCell>
                         <TableCell align='center' >{row.STATUS === "ลงทะเบียน" ? <img width="26" src={`${process.env.PUBLIC_URL}/img/Green_dot.svg`} alt="กลับบ้าน" /> : ""}</TableCell>
@@ -248,7 +251,7 @@ export default function App() {
                         <TableCell align='center' >{row.STATUS === "จบการรักษา" ? <img width="26" src={`${process.env.PUBLIC_URL}/img/Green_dot.svg`} alt="กลับบ้าน" /> : ""}</TableCell>
                         <TableCell align='center' >{row.STATUS === "ชำระเงิน" ? <img width="26" src={`${process.env.PUBLIC_URL}/img/Green_dot.svg`} alt="กลับบ้าน" /> : ""}</TableCell>
                         <TableCell align='center' >{row.STATUS === "จ่ายยา" || row.STATUS === "ชำระเงิน(คนไข้ไม่มียา)" ? <img width="26" src={`${process.env.PUBLIC_URL}/img/Green_dot.svg`} alt="กลับบ้าน" /> : ""}</TableCell>
-                        <TableCell><Typography sx={{ color: '#285094' }} >{row.WAIT_TIME} min{row.WAIT_TIME > 1 ? "s" : ""}</Typography></TableCell>
+                        <TableCell ><Typography sx={{ color: '#285094' }} >{row.WAIT_TIME} min{row.WAIT_TIME > 1 ? "s" : ""}</Typography></TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
