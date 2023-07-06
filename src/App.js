@@ -205,7 +205,7 @@ export default function App() {
                   {`${curDate} ${curTime}`}
                 </Typography>
                 <Typography variant="caption" gutterBottom sx={{ color: '#285094' }} >
-                  Version: 1.9
+                  Version: 1.10
                 </Typography>
               </Stack>
             </Grid>
