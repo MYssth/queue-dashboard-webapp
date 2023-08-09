@@ -64,7 +64,7 @@ export default function App() {
 
   function refreshData() {
 
-    fetch(`http://${process.env.REACT_APP_host}:${process.env.REACT_APP_QDSPort}/api/qds/gethnstatus`)
+    fetch(`${process.env.REACT_APP_host}${process.env.REACT_APP_QDSPort}/gethnstatus`)
       .then((response) => response.json())
       .then((data) => {
         addHNStatus(data);
@@ -205,7 +205,7 @@ export default function App() {
                   {`${curDate} ${curTime}`}
                 </Typography>
                 <Typography variant="caption" gutterBottom sx={{ color: '#285094' }} >
-                  Version: 1.10
+                  Version: {process.env.REACT_APP_version}
                 </Typography>
               </Stack>
             </Grid>
